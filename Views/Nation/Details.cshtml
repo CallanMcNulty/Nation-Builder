@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model NationBuilder.Models.Nation
+
+<h1>@Model.Name</h1>
+<h3>Year: <span id="Year">@Model.Year</span> </h3>
+<a href="/nation/Log/@Model.Id">Log</a>
+<p>@Model.GovtType | @Model.EconType | @Model.Geography</p>
+<hr />
+<ul>
+    <li>Population: <span id="Population">@Model.Population</span>M | <span id="PopulationRate">@Model.PopulationRate</span>M per turn</li>
+    <li>Prestige: <span id="Prestige">@Model.Prestige</span> | <span id="PrestigeRate">@Model.PrestigeRate</span> per turn </li>
+    <li>Stability: <span id="Stability">@Model.Stability</span> | <span id="StabilityRate">@Model.StabilityRate</span> per turn </li>
+    <li>Capital: <span id="Capital">@Model.Capital</span>$$  | <span id="CapitalRate">@Model.CapitalRate</span> per turn</li>
+    <li>Oil: <span id="Oil">@Model.Oil</span> | <span id="OilRate">@Model.OilRate</span> per turn</li>
+    <li>Water: <span id="Water">@Model.Water</span> | <span id="WaterRate">@Model.WaterRate</span> per turn</li>
+    <li>Food: <span id="Food">@Model.Food</span> | <span id="FoodRate">@Model.FoodRate</span> per turn</li>
+</ul>
+<hr />
+<div id="Actions">
+    <h2> Actions:</h2>
+    <button id="farm"> Farm</button> <p>Gain 4 food for 1 water</p>
+    <button id="sellOil"> Sell Oil</button> <p>Gain $$5 for 5 oil</p>
+    <button id="buildRefinery"> Build an oil refinery</button> <p>Build a refinery to increase oil by 1 for $$10</p>
+    <button id="buildDesalinationPlant"> Build desalination plant</button> <p>Build a desalination plant to increase water rate by 2 for $$10, and decreases oil rate by 1</p>
+    <button id="advance">Advance Turn</button>
+</div>
+<div id="event"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script>
+    var currentEvent = null;
+    function Refresh(result) {
+        $("#event").empty();
+        $("#Population").text(result.population);
+        $("#Prestige").text(result.prestige);
+        $("#Stability").text(result.stability);
+        $("#Capital").text(result.capital);
+        $("#Oil").text(result.oil);
+        $("#Water").text(result.water);
+        $("#Food").text(result.food);
+        $("#Year").text(result.year);
+        $("#PopulationRate").text(result.populationRate);
+        $("#PrestigeRate").text(result.prestigeRate);
+        $("#StabilityRate").text(result.stabilityRate);
+        $("#CapitalRate").text(result.capitalRate);
+        $("#OilRate").text(result.oilRate);
+        $("#WaterRate").text(result.waterRate);
+        $("#FoodRate").text(result.foodRate);
+        $("#YearRate").text(result.yearRate);
+    }
+    function DisplayEvent(e) {
+        $("#Actions").hide();
+        currentEvent = e;
+        var html = ""+
+            "<h3>"+e.description+"</h3>";
+        for(var i=0; i<e.choices.length; i++) {
+            html+= "<button class='choice-button' id='"+i+"'>"+e.choices[i].name+"</button>"
+        }
+        $("#event").append(html);
+        $(".choice-button").click(function(){
+            $("#Actions").show()
+            var choice = currentEvent.choices[this.id];
+            $.ajax({
+                type: 'POST',
+                data: { id: @Model.Id, choice: choice, eventName: e.description },
+                url: '@Url.Action("ExecuteChoice")',
+                success: result => Refresh(result)
+            });
+        });
+    }
+    function Update(result) {
+        Refresh(result[0]);
+        DisplayEvent(result[1]);
+    }
+
+    $("#advance").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("AdvanceTurn")',
+            success: result => Update(result)
+
+        });
+    });
+    $("#farm").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("Farm")',
+            success: result => Update(result)
+
+        });
+    });
+    $("#sellOil").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("SellOil")',
+            success: result => Update(result)
+        });
+    });
+    $("#buildRefinery").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("buildRefinery")',
+            success: result => Update(result)
+        });
+    });
+    $("#buildDesalinationPlant").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("BuildDesalinationPlant")',
+            success: result => Update(result)
+        });
+    });
+</script>

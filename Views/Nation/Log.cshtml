@@ -1,0 +1,10 @@
+﻿@using NationBuilder.Models;
+@model List<Log>
+<h2>Log</h2>
+<ul>
+@for(int i=0; i<Model.Count; i++)
+{
+    <li>@Model[i].Entry</li>
+}
+</ul> 
+<a href="/Nation/Details/@Model[0].NationId">back to details page</a>

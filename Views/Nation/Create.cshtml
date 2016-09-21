@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Create Nation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    <label>Name: </label>
+    <input name="Name" />
+    <select name="EconType">
+        <option value="Capitalism" selected="selected">Capitalist</option>
+        <option value="Socialism">Socialist</option>
+        <option value="Communism">Communist</option>
+    </select>
+    <select name="GovtType">
+        <option value="Democracy" selected="selected">Democracy</option>
+        <option value="Monarchy">Monarchy</option>
+        <option value="Theocracy">Theocracy</option>
+        <option value="Anarchy">Anarchy</option>
+    </select>
+    <select name="Geography">
+        <option value="Desert" selected="selected">Desert</option>
+        <option value="Steppe">Steppe</option>
+        <option value="Mountains">Mountains</option>
+        <option value="Jungle">Jungle</option>
+        <option value="Megalopolis">Megalopolis</option>
+    </select>
+    <button type="submit">Create</button>
+}
