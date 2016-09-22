@@ -22,13 +22,16 @@
 <hr />
 <div id="Actions">
     <h2> Actions:</h2>
-    <button id="farm"> Farm</button> <p>Gain 4 food for 1 water</p>
+    <button id="farm"> Build Farms</button> <p>Gain 1 food per year food for 1 water per year</p>
     <button id="sellOil"> Sell Oil</button> <p>Gain $$5 for 5 oil</p>
     <button id="buildRefinery"> Build an oil refinery</button> <p>Build a refinery to increase oil by 1 for $$10</p>
+    <button id="investInPolice"> Invest in your police force</button> <p>Invest in police to increast your stability rate by 1 and lower your capital gain by 1</p>
+    <button id="buildMonument"> Build a monument</button> <p>Build a monument to increase your prestige rate by 1 for $$20</p>
     <button id="buildDesalinationPlant"> Build desalination plant</button> <p>Build a desalination plant to increase water rate by 2 for $$10, and decreases oil rate by 1</p>
     <button id="advance">Advance Turn</button>
 </div>
 <div id="event"></div>
+<a href="/">back to your countries</a>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script>
@@ -73,6 +76,16 @@
         });
     }
     function Update(result) {
+        $.ajax({
+            type: 'POST',
+            data: {id: @Model.Id },
+            url: '@Url.Action("AchievementCheck")',
+            success: function(result){
+                if(result.length > 0) {
+                    alert("Achievement unlocked: " + result);
+                }
+            }
+        })
         Refresh(result[0]);
         DisplayEvent(result[1]);
     }
@@ -116,6 +129,22 @@
             type: 'POST',
             data: { id: @Model.Id },
             url: '@Url.Action("BuildDesalinationPlant")',
+            success: result => Update(result)
+        });
+    });
+    $("#buildMonument").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("BuildMonument")',
+            success: result => Update(result)
+        });
+    });
+    $("#investInPolice").click(function () {
+        $.ajax({
+            type: 'POST',
+            data: { id: @Model.Id },
+            url: '@Url.Action("InvestInPolice")',
             success: result => Update(result)
         });
     });

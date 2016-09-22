@@ -63,6 +63,20 @@ namespace NationBuilder.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Log",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Entry = table.Column<string>(nullable: true),
+                    NationId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Log", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -101,6 +115,44 @@ namespace NationBuilder.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Nations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Capital = table.Column<int>(nullable: false),
+                    CapitalRate = table.Column<int>(nullable: false),
+                    EconType = table.Column<string>(nullable: true),
+                    Food = table.Column<int>(nullable: false),
+                    FoodRate = table.Column<int>(nullable: false),
+                    Geography = table.Column<string>(nullable: true),
+                    GovtType = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Oil = table.Column<int>(nullable: false),
+                    OilRate = table.Column<int>(nullable: false),
+                    Population = table.Column<int>(nullable: false),
+                    PopulationRate = table.Column<int>(nullable: false),
+                    Prestige = table.Column<int>(nullable: false),
+                    PrestigeRate = table.Column<int>(nullable: false),
+                    Stability = table.Column<int>(nullable: false),
+                    StabilityRate = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
+                    Water = table.Column<int>(nullable: false),
+                    WaterRate = table.Column<int>(nullable: false),
+                    Year = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Nations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Nations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,6 +240,11 @@ namespace NationBuilder.Migrations
                 name: "IX_AspNetUserRoles_UserId",
                 table: "AspNetUserRoles",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Nations_UserId",
+                table: "Nations",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -206,6 +263,12 @@ namespace NationBuilder.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Log");
+
+            migrationBuilder.DropTable(
+                name: "Nations");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

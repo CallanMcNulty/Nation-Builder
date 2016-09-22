@@ -172,6 +172,30 @@ namespace NationBuilder.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("NationBuilder.Models.Achievements", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("oneHundredMillionDebt");
+
+                    b.Property<bool>("oneHundredMillionPeople");
+
+                    b.Property<bool>("oneHundredOfEverything");
+
+                    b.Property<bool>("oneHundredStability");
+
+                    b.Property<bool>("twoHundredOil");
+
+                    b.Property<string>("userId");
+
+                    b.Property<bool>("zeroPopulation");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Achievements");
+                });
+
             modelBuilder.Entity("NationBuilder.Models.Log", b =>
                 {
                     b.Property<int>("Id")

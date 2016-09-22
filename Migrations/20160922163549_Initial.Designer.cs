@@ -8,8 +8,8 @@ using BasicAuthentication.Models;
 namespace NationBuilder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160921205233_Nation")]
-    partial class Nation
+    [Migration("20160922163549_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -173,6 +173,20 @@ namespace NationBuilder.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("NationBuilder.Models.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Entry");
+
+                    b.Property<int>("NationId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Log");
+                });
+
             modelBuilder.Entity("NationBuilder.Models.Nation", b =>
                 {
                     b.Property<int>("Id")
@@ -215,6 +229,8 @@ namespace NationBuilder.Migrations
                     b.Property<int>("Water");
 
                     b.Property<int>("WaterRate");
+
+                    b.Property<int>("Year");
 
                     b.HasKey("Id");
 

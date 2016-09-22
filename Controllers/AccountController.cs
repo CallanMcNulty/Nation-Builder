@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using BasicAuthentication.Models;
 using System.Threading.Tasks;
 using NationBuilder.ViewModels;
+using System.Security.Claims;
+using System.Linq;
+using NationBuilder.Models;
+using System.Collections.Generic;
 
 namespace NationBuilder.Controllers
 {
@@ -19,9 +23,18 @@ namespace NationBuilder.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            List<Nation> model = new List<Nation>();
+            if(User.Identity.IsAuthenticated)
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+                model = _db.Nations.Where(n => n.UserId == currentUser.Id).ToList();
+                ViewBag.Achievements = _db.Achievements.FirstOrDefault(n => n.userId == currentUser.Id);
+            }
+
+            return View(model);
         }
         public IActionResult Register()
         {
@@ -35,6 +48,10 @@ namespace NationBuilder.Controllers
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                Achievements chieve = new Achievements();
+                chieve.userId = user.Id;
+                _db.Achievements.Add(chieve);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             else

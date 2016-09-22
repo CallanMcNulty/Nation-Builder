@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NationBuilder.Controllers
 {
@@ -109,6 +108,8 @@ namespace NationBuilder.Controllers
             Nation nation = _db.Nations.FirstOrDefault(n => n.Id == id);
             nation.Capital += nation.CapitalRate;
             nation.Oil += nation.OilRate;
+            nation.Prestige += nation.PrestigeRate;
+            nation.Stability += nation.StabilityRate;
             nation.Food += nation.FoodRate;
             nation.Water += nation.WaterRate;
             nation.Population += nation.PopulationRate;
@@ -123,8 +124,8 @@ namespace NationBuilder.Controllers
         public IActionResult Farm(int id)
         {
             Nation nation = _db.Nations.FirstOrDefault(n => n.Id == id);
-            nation.Food += 5;
-            nation.Water -= 1;
+            nation.FoodRate += 1;
+            nation.WaterRate -= 1;
             _db.Entry(nation).State = EntityState.Modified;
             _db.SaveChanges();
             return RedirectToAction("AdvanceTurn", new { id = id, action = "farm" });
@@ -157,6 +158,25 @@ namespace NationBuilder.Controllers
             _db.SaveChanges();
             return RedirectToAction("AdvanceTurn", new { id = id, action = "BuildDesalinationPlant" });
         }
+        public IActionResult BuildMonument(int id)
+        {
+            Nation nation = _db.Nations.FirstOrDefault(n => n.Id == id);
+            nation.PrestigeRate += 1;
+            nation.Capital -= 20;
+            _db.Entry(nation).State = EntityState.Modified;
+            _db.SaveChanges();
+            return RedirectToAction("AdvanceTurn", new { id = id, action = "BuildMonument" });
+        }
+        public IActionResult InvestInPolice(int id)
+        {
+            Nation nation = _db.Nations.FirstOrDefault(n => n.Id == id);
+            nation.StabilityRate += 1;
+            nation.CapitalRate -= 1;
+            _db.Entry(nation).State = EntityState.Modified;
+            _db.SaveChanges();
+            return RedirectToAction("AdvanceTurn", new { id = id, action = "InvestInPolice" });
+        }
+
         [Authorize]
         public IActionResult Log(int id)
         {
@@ -164,5 +184,46 @@ namespace NationBuilder.Controllers
             return View(r);
 
         }
-    }
+        public async Task<IActionResult> AchievementCheck(int id)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ApplicationUser currentUser = await _userManager.FindByIdAsync(userId);
+            Achievements Achievement = _db.Achievements.FirstOrDefault(n => n.userId == currentUser.Id);
+            Nation currentNation = _db.Nations.FirstOrDefault(n => n.Id == id);
+            string result = "";
+            if(currentNation.Oil >= 200 && !Achievement.twoHundredOil)
+            {
+                Achievement.twoHundredOil = true;
+                result += ", Oil Baron";
+            }
+            if(currentNation.Population >= 100 && !Achievement.oneHundredMillionPeople)
+            {
+                Achievement.oneHundredMillionPeople = true;
+                result += ", A Decent Reserve";
+            }
+            if(currentNation.Stability >= 100 && !Achievement.oneHundredStability)
+            {
+                Achievement.oneHundredStability = true;
+                result += ", Like a Rock";
+            }
+            if(!Achievement.oneHundredOfEverything && currentNation.Year == 100 && currentNation.Population == 100 && currentNation.Prestige == 100 && currentNation.Stability == 100 && currentNation.Capital == 100 && currentNation.Oil == 100 && currentNation.Water == 100 && currentNation.Food == 100)
+            {
+                Achievement.oneHundredOfEverything = true;
+                result += ", 100";
+            }
+            if(currentNation.Population == 0 && !Achievement.zeroPopulation)
+            {
+                Achievement.zeroPopulation = true;
+                result += ", Genocidal Maniac";
+            }
+            if(currentNation.Capital <= -100 && !Achievement.oneHundredMillionDebt)
+            {
+                Achievement.oneHundredMillionDebt = true;
+                result += ", Deficit Spender";
+            }
+            _db.Entry(Achievement).State = EntityState.Modified;
+            _db.SaveChanges();
+            return Content(result);
+        }
+     }
 }

@@ -43,6 +43,18 @@ namespace NationBuilder.Models
         {
             Random random = new Random();
             int RandomEvent = random.Next(0, 100);
+            if(Year % 100 == 0)
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Throw an event";
+                c1.StabilityIncrement += 60;
+                c1.CapitalIncrement -= 20;
+                c1.PrestigeRateIncrement += 1;
+                Choice c2 = new Choice();
+                c2.Name = "Ignore";
+                c2.StabilityIncrement += 10;
+                return new Event("Centennial anniversary", new List<Choice>() { c1, c2 });
+            }
             if (Food == 0)
             {
                 Choice c1 = new Choice();
@@ -67,6 +79,23 @@ namespace NationBuilder.Models
                 c1.Name = "Panic";
                 return new Event("Energy Crisis", new List<Choice>() { c1 });
             }
+            if (Prestige > 30 && RandomEvent < 10)
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Host the conference";
+                c1.OilRateIncrement += 1;
+                if (GovtType == "Theocracy")
+                {
+                    c1.StabilityIncrement -= 10;
+                }
+                Choice c2 = new Choice();
+                c2.Name = "Decline to host the conference";
+                if (GovtType == "Theocracy")
+                {
+                    c2.PrestigeIncrement += 10;
+                }
+                return new Event("Offer from scientific community to host a conference in your country", new List<Choice>() { c1, c2 });
+            }
             if (RandomEvent >= 10 && RandomEvent <= 15 && GovtType == "Theocracy")
             {
                 Choice c1 = new Choice();
@@ -78,7 +107,7 @@ namespace NationBuilder.Models
                 c2.StabilityIncrement -= 5;
                 return new Event("Religious artifact uncovered", new List<Choice>() { c1, c2 });
             }
-            if (RandomEvent >= 10 && RandomEvent <= 15 && GovtType == "Monarchy")
+            if (RandomEvent >= 10 && RandomEvent <= 12 && GovtType == "Monarchy")
             {
                 Choice c1 = new Choice();
                 c1.Name = "New monarch crowned";
@@ -144,6 +173,72 @@ namespace NationBuilder.Models
                 return new Event("Bread Riot", new List<Choice>() { c1, c2 });
 
             }
+            if (RandomEvent > 25 && RandomEvent <= 30 && PrestigeRate > 2)
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Limit Civil Liberties";
+                c1.PrestigeRateIncrement -= 1;
+                c1.StabilityIncrement -= 5;
+                c1.StabilityRateIncrement += 1;
+                Choice c2 = new Choice();
+                c2.Name = "Take military action";
+                c2.PrestigeIncrement += 10;
+                c2.CapitalIncrement -= 20;
+                c2.StabilityIncrement -= 5;
+                return new Event("Terrorist Attack", new List<Choice>() { c1, c2 });
+            }
+            if (RandomEvent >30 && RandomEvent <35)
+            {
+                Choice c1 = new Choice();
+                c1.Name = "rebuild";
+                c1.PopulationIncrement -= 2;
+                c1.StabilityIncrement -= 3;
+                c1.CapitalIncrement -= 5;
+                return new Event("Earthquake!", new List<Choice>() { c1 });
+            }
+            if (RandomEvent >90 && Population > 50 )
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Increase food rations";
+                c1.FoodRateIncrement -= 1;
+                Choice c2 = new Choice();
+                c2.Name = "Ignore demands of your people";
+                c2.PopulationIncrement -= 10;
+                c2.StabilityIncrement -= 10;
+                
+                return new Event("Population Increase", new List<Choice>() { c1, c2 });
+            }
+            if (RandomEvent > 65 && RandomEvent <70 && Geography == "Jungle")
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Burn the dead";
+                c1.PopulationIncrement -= 4;
+                return new Event("Malaria outbreak", new List<Choice>() { c1 });
+            }
+            if (RandomEvent > 65 && RandomEvent < 70 && Geography == "Mountain")
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Rebuild";
+                c1.PopulationIncrement -= 4;
+                return new Event("Landslide", new List<Choice>() { c1 });
+            }
+            if (RandomEvent > 65 && RandomEvent < 70 && Geography == "Steppe")
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Repel invaders";
+                c1.CapitalIncrement -= 4;
+                c1.PopulationIncrement -= 4;
+                return new Event("Barbarian Invasion", new List<Choice>() { c1 });
+            }
+            if (RandomEvent > 59 && RandomEvent < 66)
+            {
+                Choice c1 = new Choice();
+                c1.Name = "Rebuild";
+                c1.OilIncrement -= (Oil / 2);
+                c1.WaterIncrement -= 2;
+                return new Event("Sandstorm", new List<Choice>() { c1 });
+            }
+            
             Choice cx = new Choice();
             cx.Name = "Proceed";
             return new Event("Peace", new List<Choice>() { cx });

@@ -4,9 +4,9 @@
 }
 
 @using System.Security.Claims
-
-<h2>Authentication with Identity</h2>
+<h1> Your countries</h1>
 <hr />
+@model List<NationBuilder.Models.Nation>
 @if (User.Identity.IsAuthenticated)
 {
     <p>Hello @User.Identity.Name!</p>
@@ -14,6 +14,42 @@
     {
         <input type="submit" class="btn btn-default" value="Log out" />
     }
+    <ul>
+        @for(int i=0; i < Model.Count; i++)
+        {
+            <li><a href="/Nation/Details/@Model[i].Id">@Model[i].Name</a> </li>
+
+        }
+    </ul>
+    <h2>Achievements:</h2>
+    <ul>
+        @if (ViewBag.Achievements.twoHundredOil)
+        {
+             <li>Oil Baron: Gain 200 oil on one nation</li>
+        }
+        @if (ViewBag.Achievements.oneHundredMillionPeople)
+        {
+            <li>A Decent Reserve: Reach 100 million population</li>
+        }
+        @if (ViewBag.Achievements.oneHundredStability)
+        {
+            <li>Like A Rock: Gain 100 stability</li>
+        }
+        @if (ViewBag.Achievements.oneHundredOfEverything)
+        {
+            <li>100: Get 100 of everything in the year 100</li>
+        }
+        @if (ViewBag.Achievements.zeroPopulation)
+        {
+            <li>Genocidal Maniac: Drop population to 0</li>
+        }
+        @if (ViewBag.Achievements.oneHundredMillionDebt)
+        {
+            <li>Deficit Spender: Reach -$$100 million</li>
+        }
+    </ul>
+
+    <a href="/Nation/Create">New Nation</a>
 }
 else
 {
